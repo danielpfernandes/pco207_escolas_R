@@ -2,7 +2,7 @@ data_input = function(base, sep = "|") {
   return(read_delim(base, delim = sep))
 }
 
-names = function(base_array) {
+filenames = function(base_array) {
   len = length(base_array)
   aux = list()
   for (i in 1:len) {
@@ -13,8 +13,7 @@ names = function(base_array) {
 
 data_input_par = function(base_array, ncores = 0){
   
-  browser()
-  names_base = names(base_array)
+  names_base = filenames(base_array)
   len = length(base_array)
   aux = list()  
   if ((ncores) & (len>1)){
@@ -30,5 +29,32 @@ data_input_par = function(base_array, ncores = 0){
     }
   }
   return(aux)
-  
+}
+
+column_to_rows = function(base_array, ncores = 0){
+  names_base = filenames(base_array)
+  len = length(base_array)
+  aux = data_input_par(base_array)
+  columns = list()
+  for (i in 1:len){
+    column_names = colnames(aux[[i]]);
+    columns[[i]] = as.data.frame(column_names)
+    names(columns[[i]]) <-c(toString(names_base[[i]]))
+  }
+  return(columns)
+}
+
+merge_columns = function(base_array) {
+  max.rows <- max(unlist(lapply(base_array, nrow), use.names = F))
+  base_array <- lapply(base_array, function(x) {
+    na.count <- max.rows - nrow(x)
+    if (na.count > 0L) {
+      na.dm <- matrix(NA, na.count, ncol(x))
+      colnames(na.dm) <- colnames(x)
+      rbind(x, na.dm)
+    } else {
+      x
+    }
+  })
+  do.call(cbind, base_array)
 }

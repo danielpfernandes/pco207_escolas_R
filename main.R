@@ -22,13 +22,15 @@ main<-function(n)
   
   if(n==2){
     print("----Test2-----")
+    columns.list = column_to_rows(file_names)
+    return(merge_columns(columns.list))
   } 
 }
 
 #### CHAMADA DE FUNÇÃO ####
 print("##### SCHOOL DATA INPUT #####")
 ttime1 = proc.time()[3]
-base = main(1) # Alterar o numero para executar um if diferente
+base = main(2) # Alterar o numero para executar um if diferente
 ttime2 = proc.time()[3]
 
 print(paste("Time:",round((ttime2-ttime1), 1),"secs"))
